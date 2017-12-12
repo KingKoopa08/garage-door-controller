@@ -1,5 +1,7 @@
-[Garage Door Controller v1.1](https://github.com/andrewshilliday/garage-door-controller)
+[Garage Door Controller v2.0](https://github.com/andrewshilliday/garage-door-controller)
 ======================
+First of all huge shoutout to @andrewshilliday for the mainbuild of this. I have expanded on this to give slack integration for notifications.
+
 
 Monitor and control your garage doors from the web via a Raspberry Pi.
 
@@ -99,7 +101,13 @@ Software Installation:
 
     The **approx_time_to_XXX** options are not particularly crucial.  They tell the program when to shift from the opening or closing state to the "open" or "closed" state.  You don't need to be out there with a stopwatch and you wont break anything if they are off.  In the worst case, you may end up with a slightly odd behavior when closing the garage door whereby it goes from "closing" to "open" (briefly) and then to "closed" when the sensor detects that the door is actually closed.
 
-        
+	##Slack Webhook##
+	
+	-Set the webhook to the one provided by Slack when you create the webhook at https://my.slack.com/services/new/incoming-webhook/
+	
+	Detailed documentation of Slack Incoming Webhooks:
+	https://api.slack.com/incoming-webhooks
+	        
 6.  **Set to launch at startup**
 
     Simply add the following line to your /etc/rc.local file, just above the call to `exit 0`:

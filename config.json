@@ -22,6 +22,10 @@
 		{
 		"access_token":"<ACCES TOKEN>"
 		},
+	"slack":
+		{
+		"webhook":"<slack webhook>"
+		},
 	"pushover":
 		{
 		"user_key":"<PUSHOVER USER KEY>",

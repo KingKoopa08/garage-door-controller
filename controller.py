@@ -7,6 +7,7 @@ import json
 import httplib
 import urllib
 import subprocess
+import requests
 
 from twisted.internet import task
 from twisted.internet import reactor
@@ -109,6 +110,9 @@ class Controller(object):
         elif self.alert_type == 'pushover':
             self.pushover_user_key = config['alerts']['pushover']['user_key']
             syslog.syslog("we are using Pushover")
+        elif self.alert_type == 'slack':
+            self.webhook = config['alerts']['slack']['webhook']
+            syslog.syslog("we are using slack")
         else:
             self.alert_type = None
             syslog.syslog("No alerts configured")
@@ -134,6 +138,8 @@ class Controller(object):
                         self.send_pushbullet(door, title, message)
                     elif self.alert_type == 'pushover':
                         self.send_pushover(door, title, message)
+                    elif self.alert_type == 'slack':
+                        self.send_slack(door, title, message)
                     door.msg_sent = True
 
             if new_state == 'closed':
@@ -148,6 +154,8 @@ class Controller(object):
                             self.send_pushbullet(door, title, message)
                         elif self.alert_type == 'pushover':
                             self.send_pushover(door, title, message)
+                        elif self.alert_type == 'slack':
+                            self.send_slack(door, title, message)
                 door.open_time = time.time()
                 door.msg_sent = False
 
@@ -195,6 +203,20 @@ class Controller(object):
                     "message": message,
                 }), { "Content-type": "application/x-www-form-urlencoded" })
         conn.getresponse()
+
+    def send_slack(self, door, title, message):
+        syslog.syslog("Sending Slack message")
+        config = self.config['alerts']['slack']
+        slack_data = {'text': message}
+
+        response = requests.post(config['webhook'], data=json.dumps(slack_data),
+            headers={'Content-Type': 'application/json'}
+        )
+        if response.status_code != 200:
+            raise ValueError(
+                'Request to slack returned an error %s, the response is:\n%s'
+                % (response.status_code, response.text)
+            )
 
     def update_openhab(self, item, state):
         syslog.syslog("Updating openhab")
